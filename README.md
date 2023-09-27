@@ -11,7 +11,7 @@ How to work with the code in julia below.
 
 ### One approach to use the project
 
-This is a simple approach how to instantiate the project and install its dependencies
+This is a simple approach how to instantiate the project and install its dependencies. This is also required before one opens the notebook example.
 
    1. Open a Julia console in the folder of this repository.
    2. Activate the project's environment
@@ -25,7 +25,7 @@ This is a simple approach how to instantiate the project and install its depende
    ```
    4. Open the script `scripts/run_simple_day_hour.jl` in your favourite editor and copy+paste or execute the code in the Julia console
 
-Be aware that if you want to use julia in Jupyter Notebooks or Jupyter Lab, use first need to add IJulia package to your global julia environment. In a Julia console run this:
+**Jupyter Notebooks/Lab**: Be aware that if you want to use julia in Jupyter Notebooks or Jupyter Lab, use first need to add IJulia package to your global julia environment. In a Julia console run this:
    ```julia
    using Pkg
    Pkg.add("IJulia")

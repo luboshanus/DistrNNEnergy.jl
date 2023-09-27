@@ -26,6 +26,7 @@ addprocs(number_of_procs)
 @everywhere include(srcdir("utils_args.jl"))
 @everywhere include(srcdir("utils_train.jl"))
 @everywhere include(srcdir("utils_eval.jl"))
+
 println(" Number of workers: ", nprocs())
 println("\n________________________________")
 println("\n  DistrNNEnergy learning")
