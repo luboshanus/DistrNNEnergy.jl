@@ -5,7 +5,7 @@ We provide functions and full exercise code to obtain the results. The results m
 
 The process how to activate and use this project code is below. The code is build in `Julia v1.8.5`.
 
-How to work with the code in julia [below](#howto).
+How to work with the code in julia [below](#how-to-install-and-use-this-package).
 
 ## Learning Distribution of Intra-day Electricity Prices
 
@@ -33,8 +33,9 @@ julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt
 nohup julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt &
 ```
 
-## How to install and use this package (DrWatson)  {#howto}
+## How to install and use this package
 
+*DrWatson manual*:
 This code base is using the [Julia Language](https://julialang.org/) and
 [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) to make a reproducible scientific project named
 > DistrNNEnergy
