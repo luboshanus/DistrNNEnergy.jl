@@ -5,7 +5,7 @@ We provide functions and full exercise code to obtain the results. The results m
 
 The process how to activate and use this project code is below. The code is build in `Julia v1.8.5`.
 
-How to work with the code in julia [below](#how-to-install-and-use-this-package).
+How to work with the code in julia below.
 
 ## How to install and use this package
 
