@@ -1,10 +1,10 @@
 # Minimum example DistrNNEnergy.jl
 
-This markdown provides a readable but minimum example using the approach from the paper *"Learning Probability Distributions of Intraday Electricity Prices"*, Barunik and Hanus (2023).
+This markdown provides a readable but minimum example using the approach from the paper Barunik, Jozef and Hanus, Luboš, Learning Probability Distributions of Intraday Electricity Prices. Available at SSRN: [link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4592411).
 
 The same instructions can be found in the script `scripts/simple_run.jl`. And full replication of the learning of DistrNN reported in the paper is in the file `scripts/run_complete_par.jl`. Please bear in mind that the full run takes more than 24 hours when using 60 cpu cores.
 
-## Learning Probability Distributions of Intra-day Electricity Prices
+## Learning Probability Distributions of Electricity Prices
 
 
 ```julia

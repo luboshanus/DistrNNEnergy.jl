@@ -7,7 +7,7 @@ The process how to activate and use this project code is below. The code is buil
 
 How to work with the code in julia below, [go ⬇](#how-to-install-and-use-this-package).
 
-## Learning Distribution of Intra-day Electricity Prices
+## Learning Distribution of Electricity Prices
 
 Open a file you want to run and go step-by-step, or just run bash commands to execute whole code from terminal. Also, there is a notebook with minimum working example in `/notebooks`. 
 
