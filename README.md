@@ -1,6 +1,6 @@
 # DistrNNEnergy.jl
 
-This repository supports the paper Barunik, Jozef and Hanus, Luboš, Learning Probability Distributions of Intraday Electricity Prices (October 4, 2023). Available at SSRN: [https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4592411](link).
+This repository supports the paper Barunik, Jozef and Hanus, Luboš, Learning Probability Distributions of Intraday Electricity Prices (October 4, 2023). Available at SSRN: [link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4592411).
 We provide functions and full exercise code to obtain the results. The results might not be exactly the same numerically, since it depends on the random seed and initializations of neural network parameters.
 
 The process how to activate and use this project code is below. The code is build in `Julia v1.8.5`.
