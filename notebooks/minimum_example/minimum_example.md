@@ -29,7 +29,7 @@ The two `.csv` files are prepared before the estimation. It uses the code provid
 
 
 ```julia
-# __ Data load on workers/processes
+# __ Data load
 x_orig = CSV.read(datadir("exp_raw", "x-de-15-20.csv"), DataFrame);
 y_orig = CSV.read(datadir("exp_raw", "y-de-15-20.csv"), DataFrame);
 ```
@@ -59,19 +59,19 @@ dy = y_orig[!,1];
 ```julia
 # __ Define days to work on
 T = size(ym,1)
-Tt = T - 360 - 180*1
+Tt = T - 554 - 182
 oos_days = collect(Tt+1:T);
 println("First OOS obs: ", oos_days[1], ", Last OOS obs: ", oos_days[end], "  days")
 ```
 
-    First OOS obs: 1646, Last OOS obs: 2185  days
+    First OOS obs: 1450, Last OOS obs: 2185  days
 
 
 
 ```julia
 # __ One day one hour of OOS
-day_t = oos_days[1]
-h_hour = 12;
+day_t = oos_days[183] # first day in the evaluation part
+h_hour = 8;
 ```
 
 ### Hyperoptimization run
@@ -80,13 +80,13 @@ h_hour = 12;
 ```julia
 # __ Fixed parameters shared through estimation
 # _ original
-# shared_pars = (epochs=350, hidden_layers=2, kfolds=7, λm=1.5f0, progbar=false, hpo_size=60, ensembles=8, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*4+6)
+# shared_pars = (epochs=1000, hidden_layers=2, kfolds=7, λm=1.5f0, progbar=false, hpo_size=60, ensembles=8, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*30*4)
 
 # _ faster (not precise, just to see if the code is working)
 shared_pars = (
-    epochs=350, hidden_layers=2, kfolds=2, λm=1.5f0, progbar=false, hpo_size=5, ensembles=4, 
-    shuffle_train=true, early_stopping=15, net_output=Flux.identity, 
-    js=21, alphas=Float32.(LinRange(0.01,0.99,21)), num_tr_batches=12*4+6,
+    epochs=250, hidden_layers=2, kfolds=7, λm=1.5f0, progbar=false, hpo_size=5, ensembles=4, 
+    shuffle_train=true, early_stopping=15, js=31, alphas=Float32.(LinRange(0.01,0.99,31)),
+    num_tr_batches=12*30*2, # one year, originally it is 4 = 12*30*4
     );
 ```
 
@@ -99,14 +99,14 @@ Run hyperoptimization:
 @time out_hpo = day_i_run(day_t, h_hour, xm, ym, true; shared_pars...);
 ```
 
-      ▓  HPO Starts   now 2023-09-27T14:37:42.931
-    1 	(η = 0.003f0, λ = 1.0f-5, ϕ = 0.0f0, ϕ2 = 0.25f0, nodes = 80, nodes2 = 56, batch_size = 32, act_fun = NNlib.relu, act_fun2 = tanh)
-    2 	(η = 0.0012819f0, λ = 0.001f0, ϕ = 1.0f0, ϕ2 = 0.75f0, nodes = 104, nodes2 = 32, batch_size = 32, act_fun = tanh, act_fun2 = NNlib.relu)
-    3 	(η = 0.00054772f0, λ = 0.01f0, ϕ = 0.25f0, ϕ2 = 0.5f0, nodes = 32, nodes2 = 80, batch_size = 32, act_fun = NNlib.σ, act_fun2 = NNlib.σ)
-    4 	(η = 0.0001f0, λ = 1.0f-6, ϕ = 0.5f0, ϕ2 = 1.0f0, nodes = 56, nodes2 = 104, batch_size = 32, act_fun = NNlib.softplus, act_fun2 = NNlib.softplus)
-    5 	(η = 0.00023403f0, λ = 0.0001f0, ϕ = 0.75f0, ϕ2 = 0.0f0, nodes = 128, nodes2 = 128, batch_size = 32, act_fun = NNlib.relu, act_fun2 = NNlib.relu)
-      ▓  HPO Finished now 2023-09-27T14:42:14.524
-    279.328373 seconds (296.94 M allocations: 65.807 GiB, 5.62% gc time, 20.81% compilation time)
+      ▓  HPO Starts   now 2023-10-04T20:43:55.728
+    1 	(η = 0.003f0, λ = 0.0001f0, ϕ = 0.25f0, ϕ2 = 0.0f0, nodes = 208, nodes2 = 32, batch_size = 64, act_fun = NNlib.relu, act_fun2 = NNlib.relu)
+    2 	(η = 0.00023403f0, λ = 0.01f0, ϕ = 0.75f0, ϕ2 = 0.25f0, nodes = 32, nodes2 = 296, batch_size = 64, act_fun = tanh, act_fun2 = NNlib.softplus)
+    3 	(η = 0.0001f0, λ = 1.0f-5, ϕ = 0.0f0, ϕ2 = 0.75f0, nodes = 120, nodes2 = 208, batch_size = 64, act_fun = NNlib.σ, act_fun2 = NNlib.σ)
+    4 	(η = 0.0012819f0, λ = 1.0f-6, ϕ = 1.0f0, ϕ2 = 0.5f0, nodes = 296, nodes2 = 384, batch_size = 64, act_fun = NNlib.relu, act_fun2 = NNlib.relu)
+    5 	(η = 0.00054772f0, λ = 0.001f0, ϕ = 0.5f0, ϕ2 = 1.0f0, nodes = 384, nodes2 = 120, batch_size = 64, act_fun = NNlib.softplus, act_fun2 = tanh)
+      ▓  HPO Finished now 2023-10-04T20:50:41.085
+    413.928092 seconds (266.53 M allocations: 145.287 GiB, 4.80% gc time, 15.19% compilation time)
 
 
 Note: To save time, one can run it in parallel, the hyperoptimisation function is ready for multiple core, one just need to load all data and variables on number of workers that those can work with it. See `scripts/run_complete_par.jl`.
@@ -119,7 +119,7 @@ Note: To save time, one can run it in parallel, the hyperoptimisation function i
 println("Minimum: ", minimum(out_hpo), "   Best pars: ", out_hpo.minimizer)
 ```
 
-    Minimum: 0.17415866   Best pars: (32, NNlib.relu, tanh, 80, 56, 0.0f0, 0.25f0, 0.003f0, 1.0f-5)
+    Minimum: 0.6110164   Best pars: (64, tanh, NNlib.softplus, 32, 296, 0.75f0, 0.25f0, 0.00023403f0, 0.01f0)
 
 
 
@@ -131,7 +131,22 @@ best_pars = (out_hpo.params .=> out_hpo.minimizer)
 
 
 
-    (:batch_size => 32, :act_fun => NNlib.relu, :act_fun2 => tanh, :nodes => 80, :nodes2 => 56, :ϕ => 0.0f0, :ϕ2 => 0.25f0, :η => 0.003f0, :λ => 1.0f-5)
+    (:batch_size => 64, :act_fun => tanh, :act_fun2 => NNlib.softplus, :nodes => 32, :nodes2 => 296, :ϕ => 0.75f0, :ϕ2 => 0.25f0, :η => 0.00023403f0, :λ => 0.01f0)
+
+
+
+Other best parameters, arbitrarily chosen
+
+
+```julia
+# _ Other parameters, arbitrarily chosen
+best_pars = (epochs = 350, batch_size = 32, act_fun = NNlib.softplus, act_fun2 = NNlib.softplus, nodes = 128, nodes2 = 64, ϕ = 0.4f0, ϕ2 = 0.0f0, η = 0.001f0, λ = 0.0001f0)
+```
+
+
+
+
+    (epochs = 350, batch_size = 32, act_fun = NNlib.softplus, act_fun2 = NNlib.softplus, nodes = 128, nodes2 = 64, ϕ = 0.4f0, ϕ2 = 0.0f0, η = 0.001f0, λ = 0.0001f0)
 
 
 
@@ -146,7 +161,7 @@ This and above function is run in parallel loop in the script over `hours=1:24` 
 ```
 
     Doing Ensembles
-     80.146380 seconds (79.95 M allocations: 29.476 GiB, 9.55% gc time, 3.56% compilation time)
+     60.125776 seconds (44.97 M allocations: 18.701 GiB, 5.79% gc time, 7.35% compilation time)
 
 
 Predictions:
@@ -161,7 +176,7 @@ out_d_h[1]
 
 
     1×99 Matrix{Float32}:
-     40.2176  42.7865  44.5437  45.3454  …  68.5778  70.7899  75.0124  89.5392
+     1.97431  20.7362  26.9752  29.7669  …  58.2373  60.5224  66.1799  80.5069
 
 
 
@@ -175,8 +190,8 @@ out_d_h[2]
 
 
     2-element Vector{Any}:
-     Float32[0.00022274487; 0.00031156492; … ; 0.92451644; 0.9853919;;]
-     Float32[0.00017681543; 0.0003141111; … ; 0.88653064; 0.9884841;;]
+     Float32[0.0023296834; 0.010087167; … ; 0.98686105; 0.99092126;;]
+     Float32[0.009212163; 0.016356347; … ; 0.98795366; 0.995564;;]
 
 
 
@@ -189,7 +204,7 @@ out_d_h[3]
 
 
 
-<div><div style = "float: left;"><span>4×2 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">id</th><th style = "text-align: left;">loss</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Any" style = "text-align: left;">Any</th><th title = "Any" style = "text-align: left;">Any</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: left;">1</td><td style = "text-align: left;">0.150924</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: left;">2</td><td style = "text-align: left;">0.176748</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: left;">3</td><td style = "text-align: left;">0.160596</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: left;">4</td><td style = "text-align: left;">0.168905</td></tr></tbody></table></div>
+<div><div style = "float: left;"><span>4×2 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">id</th><th style = "text-align: left;">loss</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Any" style = "text-align: left;">Any</th><th title = "Any" style = "text-align: left;">Any</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: left;">1</td><td style = "text-align: left;">0.201085</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: left;">2</td><td style = "text-align: left;">0.195868</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: left;">3</td><td style = "text-align: left;">0.189999</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: left;">4</td><td style = "text-align: left;">0.196649</td></tr></tbody></table></div>
 
 
 
@@ -203,7 +218,7 @@ ym[day_t,h_hour]
 
 
 
-    53.99f0
+    43.29f0
 
 
 
@@ -217,7 +232,7 @@ pq_mat, crps_vec = one_forecast_pinballs(out_d_h[1], ym[day_t,h_hour], collect(1
 
 
 
-    ([0.13772418975830078 0.2240697479248047 … 0.42044853210449257 0.35549243927001983], [0.6366741631247781;;])
+    ([0.41315689086914065 0.4510763931274414 … 0.4577986145019535 0.37216941833496126], [0.9034816807448263;;])
 
 
 
@@ -230,7 +245,7 @@ pq_mat
 
 
     1×99 Matrix{Float64}:
-     0.137724  0.22407  0.283389  0.345785  …  0.503997  0.420449  0.355492
+     0.413157  0.451076  0.489443  0.540924  …  0.516971  0.457799  0.372169
 
 
 
@@ -242,7 +257,7 @@ pq_mat |> mean
 
 
 
-    0.6366741631247781
+    0.9034816807448263
 
 
 
@@ -255,7 +270,7 @@ crps_vec
 
 
     1×1 Matrix{Float64}:
-     0.6366741631247781
+     0.9034816807448263
 
 
 
@@ -277,7 +292,7 @@ plt_prbs = plot(1:shared_pars.js, out_d_h[2], title="CDFs vs Probability levels"
 
 
     
-![svg](output_35_0.svg)
+![svg](output_37_0.svg)
     
 
 
@@ -293,7 +308,7 @@ plt_qts = hline!([ym[day_t,h_hour]], label="True price")
 
 
     
-![svg](output_36_0.svg)
+![svg](output_38_0.svg)
     
 
 
@@ -309,7 +324,7 @@ plt_pq = plot(collect(1:99) ./ 100, pq_mat', ylabel="Pinball loss", xlabel="Prob
 
 
     
-![svg](output_38_0.svg)
+![svg](output_40_0.svg)
     
 
 

@@ -5,7 +5,49 @@ We provide functions and full exercise code to obtain the results. The results m
 
 The process how to activate and use this project code is below. The code is build in `Julia v1.8.5`.
 
-How to work with the code in julia below.
+How to work with the code in julia below, [go ⬇](#how-to-install-and-use-this-package).
+
+## Learning Distribution of Intra-day Electricity Prices
+
+Open a file you want to run and go step-by-step, or just run bash commands to execute whole code from terminal. Also, there is a notebook with minimum working example in `/notebooks`. 
+
+The main code, to replicate the study is `scripts/run_complete_par.jl`. It runs parallel CPU processes to perform hyper-optimization and  forward rolling scheme over out-of-sample days, where it trains neural networks for each day.
+
+Further, in scripts, we provide a code to prepare data frames `X` and `Y` we use in the learning, `scripts/data_prepare.jl`.
+
+### Simple estimation (one day and one hour)
+
+We provide a working minimum example at [notebooks/minimum_example/minimum_example.md](./notebooks/minimum_example/minimum_example.md)
+and as notebook in `/notebooks`.
+
+One can train the network for one day and one hour using `run_simple.jl`, which is a script containing the same code as the notebook.
+It disaggregates the code from complete run file, also provides simple plots and evaluation functions.
+
+### Full run
+
+RUN in terminal/bash:
+
+```bash
+# _ full file to run, takes 24-36 hours on 60 cores:
+julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt
+
+# _ One can use nohup to run the code in background (nohup and `&`):
+nohup julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt &
+```
+
+The complete script saves results into `.csv` and `.bson` files into folder `data/exp_pro`.
+
+#### Notes
+
+Please, be aware that during the execution ensembles estimation for individual hours, hence days in the loop, there might occur a memory overflow. Although, tt does not happen often, it may happen. If so, just start the loop over hours `1:24` at hour when it happened, like `14:24`.
+
+## TODO
+
+- Polish code
+- Upload LEAR QRA in Julia, now we ask to use `epftoolbox` written in python.
+  - Jesus Lago, Grzegorz Marcjasz, Bart De Schutter, Rafał Weron. “Forecasting day-ahead electricity prices: A review of state-of-the-art algorithms, best practices and an open-access benchmark”. Applied Energy 2021; 293:116983.
+
+------
 
 ## How to install and use this package
 
@@ -62,38 +104,3 @@ which auto-activate the project and enable local path handling from DrWatson.
 ### Other alternative
 
 It is just to open this project in VSCode or Atom editors and it will locate your julia console at the folder once use execute/run a line of julia code from one of the scripts.
-
-## Learning Distribution of Intra-day Electricity Prices
-
-Open a file you want to run, or just run bash commands to execute whole code from terminal. 
-
-The complete script saves results into `.csv` and `.bson` files into folder `data/exp_pro`.
-
-### Simple estimation (one day and one hour)
-
-We provide a working minimum example at [notebooks/minimum_example/minimum_example.md](./notebooks/minimum_example/minimum_example.md)
-
-One can train the network for one day and one hour using `run_simple.jl`.
-The setup in the simple file is as follows. The lines below are basically disaggregated the code from file with figures and matrices.
-
-### Full run
-
-RUN in terminal/bash:
-
-```bash
-# _ full file to run, takes 24-36 hours on 60 cores:
-julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt
-
-# _ One can use nohup to run the code in background (nohup and `&`):
-nohup julia scripts/run_complete_par.jl > data/temp_"`date +%FT%H%M`".txt &
-```
-
-#### Notes
-
-Please, be aware that during the execution ensembles estimation for individual hours, hence days in the loop, there might occur a memory overflow. Although, tt does not happen often, it may happen. If so, just start the loop over hours `1:24` at hour when it happened, like `14:24`.
-
-## TODO
-
-- Polish code
-- Upload LEAR QRA in Julia, now we ask to use `epftoolbox` written in python.
-  - Jesus Lago, Grzegorz Marcjasz, Bart De Schutter, Rafał Weron. “Forecasting day-ahead electricity prices: A review of state-of-the-art algorithms, best practices and an open-access benchmark”. Applied Energy 2021; 293:116983.

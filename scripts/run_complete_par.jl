@@ -44,7 +44,7 @@ flush(stdout)
 
 # __ Define days to work on
 T = size(ym,1)
-Tt = T - 360 - 180*1
+Tt = T - 554 - 182
 oos_days = collect(Tt+1:T)
 
 # __ First day of OOS, its train and validation is used for HPO
@@ -57,7 +57,7 @@ println("  ID: $(task_id), File: \n\t", @__FILE__, "   at: ", gethostname())
 println("  OOS is 1.5 years (because of QRA we evaluate 360 days), and full train 4.5 years")
 # ________________________________
 # __ Fixed parameters shared through estimation
-shared_pars = (epochs=350, hidden_layers=2, kfolds=2, λm=1.5f0, progbar=false, hpo_size=number_of_procs, ensembles=4, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12) #12*4+6
+shared_pars = (epochs=1000, hidden_layers=2, kfolds=2, λm=1.5f0, progbar=false, hpo_size=number_of_procs, ensembles=8, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*30*4)
 println("\n  Shared parameters: ", shared_pars, "\n")
 flush(stdout)
 

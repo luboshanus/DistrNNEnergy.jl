@@ -32,7 +32,7 @@ dy = y_orig[!,1]
 
 # __ Define days to work on
 T = size(ym,1)
-Tt = T - 360 - 180*1
+Tt = T - 554 - 182
 oos_days = collect(Tt+1:T)
 
 # __ One day one hour, first day of 00S and its first hour
@@ -44,7 +44,7 @@ h_hour = 1
 # shared_pars = (epochs=350, hidden_layers=2, kfolds=7, λm=1.5f0, progbar=false, hpo_size=60, ensembles=8, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*4+6)
 
 # _ faster (not precise, just to see if the code is working)
-shared_pars = (epochs=150, hidden_layers=2, kfolds=2, λm=1.5f0, progbar=false, hpo_size=5, ensembles=4, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*4+6)
+shared_pars = (epochs=150, hidden_layers=2, kfolds=2, λm=1.5f0, progbar=false, hpo_size=6, ensembles=4, shuffle_train=true, early_stopping=15, net_output=Flux.identity, js=31, alphas=Float32.(LinRange(0.01,0.99,31)), num_tr_batches=12*30) # 4 years train+valid 12*30*4
 
 # __ If hyperoptimization, true
 @time out_hpo = day_i_run(day_t, h_hour, xm, ym, true; shared_pars...);

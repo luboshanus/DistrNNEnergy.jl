@@ -98,8 +98,8 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
         cv_data = (Xs, Ys)
 
         # _ empty arrays to save data from validation
-        cv_tr_loss = []
-        cv_vl_loss = []
+        cv_tr_loss = Float32[]
+        cv_vl_loss = Float32[]
         models = []
 
         # __ Start progress bar
@@ -123,8 +123,8 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
             train_data = mapobs(xy -> (augment_n_1(xy[1]), xy[2]),  train_data) # N(0,0.03f0)
 
             # __ Saving arrays
-            tr_losses = []
-            vl_losses = []
+            tr_losses = Float32[]
+            vl_losses = Float32[]
             best_vl_loss = Inf
             best_model = deepcopy(model)
             monofails = Int32[]
@@ -133,7 +133,7 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
             # _ Loop of training
             for epoch = 1:args.epochs
                 Flux.trainmode!(model)
-                mini_losses = []
+                mini_losses = Float32[]
                 # Iterate over the data using mini-batches of batch_size observations each
                 # ... for each fold and epoch
                 for (x, y) in eachobs(train_data, batchsize=args.batch_size)
@@ -200,8 +200,8 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
         train_data, val_data = splitobs((Xs, Ys); at=args.split_ratio)
 
         # __ Empty arrays
-        cv_tr_loss = []
-        cv_vl_loss = []
+        cv_tr_loss = Float32[]
+        cv_vl_loss = Float32[]
         models = []
 
         # _ start progress bar
@@ -220,8 +220,8 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
         train_data = mapobs(xy -> (augment_n_1(xy[1]), xy[2]),  train_data) # N(0,0.03f0)
 
         # _ Saving arrays
-        tr_losses = []
-        vl_losses = []
+        tr_losses = Float32[]
+        vl_losses = Float32[]
         best_vl_loss = Inf
         best_model = deepcopy(model)
         monofails = Int32[]
@@ -230,7 +230,7 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
         # _ Epochs training
         for epoch = 1:args.epochs
             Flux.trainmode!(model)
-            mini_losses = []
+            mini_losses = Float32[]
             # _
             for (x, y) in DataLoader(train_data, batchsize=args.batch_size)
                 # _ Train supervised model on minibatches here
@@ -289,14 +289,12 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
         hpo_size < 2 ? hpo_size = 2 : nothing
         println("  ▓  HPO Starts   now ", now())
         # _ HPO
-        ho = @phyperopt for i=hpo_size, sampler=CLHSampler(dims=[Hyperopt.Categorical(1), Hyperopt.Categorical(4), Hyperopt.Categorical(4), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous()]), #Hyperopt.Continuous(),
-                    batch_size = [32],
+        ho = @phyperopt for i=hpo_size, sampler=CLHSampler(dims=[Hyperopt.Categorical(1), Hyperopt.Categorical(4), Hyperopt.Categorical(4), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous(), Hyperopt.Continuous()]),
+                    batch_size = [64],
                     act_fun = [tanh, softplus, relu, sigmoid], #
                     act_fun2 = [tanh, softplus, relu, sigmoid], #
-                    nodes = floor.(Int, LinRange(32,128,hpo_size)),
-                    nodes2 = floor.(Int, LinRange(32,128,hpo_size)),
-                    # nodes = [64,128,256],
-                    # nodes2 = [64,128,256],
+                    nodes = floor.(Int, LinRange(32,384,hpo_size)),
+                    nodes2 = floor.(Int, LinRange(32,384,hpo_size)),
                     ϕ = r5.(LinRange{Float32,Int32}(0.0, 1.0, hpo_size)),
                     ϕ2 = r5.(LinRange{Float32,Int32}(0.0, 1.0, hpo_size)),
                     η = r5.(even_log_scale(0.0001f0, 0.003f0, hpo_size)),
@@ -327,7 +325,7 @@ function day_i_run(di, h, xfull, yfull, hyperoptim=false; kws...)
 
     # __ Arguments used to setup the run
     argsx = Args(; kws...)
-    cal_window = argsx.num_tr_batches * 30 # days of training and validation
+    cal_window = argsx.num_tr_batches # days of training and validation
     oos_span = 1 # Not this: args.oos_span,
 
     # __ Standardize data

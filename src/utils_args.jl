@@ -38,7 +38,8 @@ import Flux: ADAMW
     layer_type = "LSTM"         # Type of layer, should be one of LSTM, GRU, RNN
     act_fun = Flux.relu         # Activation function
     act_fun2 = Flux.relu        # Activation function, second and next layers
-    net_output = Flux.sigmoid   # Output of the network
+    net_output = Flux.identity  # Output of the network, 
+    # Flux.sigmoid (sigmoid is used in functions in utils_train.jl as output, this is because of more stable loss logitbinarycrossentropy than binarycrossentropy)
 
     # _ Training parameters
     epochs::Int = 150           # Number of epochs
